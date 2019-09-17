@@ -1,0 +1,66 @@
+/* A simple programming demonstrating how to respond to user events
+ * In this example animation is demonstrated
+ * Mangat
+ * 2015 
+ */
+
+
+// These imports are required to make a GUI that the user can interact with
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*; 
+import java.util.Scanner;
+import java.awt.image.*;
+import javax.imageio.*;
+
+// end of imports
+
+
+
+class BindingOfIsack { 
+  static startGame sg = new startGame();
+  static myGraphicsPanel rightPanel;  //our custom panel needs to be accessed in multiple methods
+  static JButton button1;
+  static JButton button2;
+  // ****
+  
+  
+  public static void main(String[] args) {
+    
+    // **** Create a new Window and set it up
+    JFrame myWindow = new JFrame("Binding of Isack"); //create a new window with a title
+    
+    myWindow.setSize(1024,768);  // set the size of my window to 400 by 400 pixels
+    myWindow.setResizable(true);  // set my window to allow the user to resize it
+    myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // set the window up to end the program when closed
+    myWindow.setLayout(new GridLayout(0,1));  
+    JPanel Panel = new JPanel();
+    Panel = new myGraphicsPanel();
+    button1 = new JButton(" Start game "); 
+    button1.addActionListener(new buttonListener());
+    Panel.add(button1);    
+    myWindow.add(Panel); 
+    myWindow.setVisible(true);
+    myWindow.repaint();
+    
+  }
+  
+  static class buttonListener implements ActionListener { 
+    public void actionPerformed(ActionEvent event)  {  
+      if (event.getSource()==button1) { 
+        sg.run();
+      }
+
+    }
+  }
+  static class myGraphicsPanel extends JPanel {
+    public void paintComponent(Graphics g) { 
+      super.paintComponent(g); //required
+      try{
+        BufferedImage startScreen = ImageIO.read(new File("startScreen.png"));
+        g.drawImage(startScreen,0,0,null);
+      } catch(Exception e) {};
+    }
+  }
+}

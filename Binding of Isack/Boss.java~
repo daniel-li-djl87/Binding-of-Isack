@@ -1,0 +1,117 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*; 
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.awt.image.*;
+import javax.imageio.*;
+public class Boss extends Enemy{
+  BufferedImage[] sprites;
+  int currentSprite,currentStep;
+  int direction;
+  int width;
+  int length;
+  int playerX;
+  int playerY;
+  ArrayList<BossBullet> firedBullets = new ArrayList<BossBullet>();
+   int totalBullets;
+   Clock clock;
+  
+  public Boss (int health, int x, int y){
+    super (health,x,y);
+    loadSprites();
+    currentSprite = 0;
+    currentStep = 0;
+    width = 96;
+    length = 89;
+    boundingBox=new Rectangle((int)x, (int)y, width, length);
+    totalBullets = 0;
+    clock = new Clock();
+  }
+  
+  public void loadSprites(){
+    try {
+      sprites = new BufferedImage[5];      
+      sprites[0] = ImageIO.read(new File("BossPassive.png"));
+      sprites[1] = ImageIO.read(new File("BossShoot.png"));
+      sprites[2] = ImageIO.read(new File("BossHit.png"));
+      sprites[3] = ImageIO.read(new File("BossHitTwo.png")); 
+      sprites[4] = ImageIO.read(new File("BossDeath.png"));
+    } catch(Exception e) {}
+  }
+  public void draw(Graphics g){
+    g.drawImage(sprites[currentSprite],(int)this.getX(),(int)this.getY(),null);
+  }
+  public void update( double playerX, double playerY){ 
+    if (currentStep>=30){
+      currentStep=0;
+    }
+    if (currentStep==0){
+      direction = ((int)(Math.random()*4));
+    }
+    if ( this.getX() < playerX &&this.getX()<=870 ){
+      currentStep++;
+      currentSprite = 0;
+      moveRight();
+    } else if ( this.getX() > playerX && this.getX()>=150 ){
+      currentStep++;
+      currentSprite = 0;
+      moveLeft();
+    }    
+    if ( this.getY() < playerY && this.getY()<=585 ){
+      currentStep++;
+      currentSprite = 0;
+      moveDown();
+    } else if ( this.getY() > playerY &&this.getY()>=210){
+      currentStep++;
+      currentSprite = 0;
+      moveUp();
+    }
+    if (this.getHealth()<50){
+      currentSprite = 2;
+    }else if (this.getHealth()<25){
+      currentSprite = 3;
+    }else if (this.getHealth()<=0){
+      currentSprite = 4;
+    }    
+    boundingBox.x=(int)this.getX();
+    boundingBox.y=(int)this.getY();
+  }
+  public void moveUp(){
+    this.setY(this.getY()-1);
+  }
+  
+  public void moveDown(){
+    this.setY(this.getY()+1);
+  }
+  
+  public void moveLeft(){
+    this.setX(this.getX()-1);
+  }
+  
+  public void moveRight(){
+    this.setX(this.getX()+1);
+  }
+  
+  
+  public void takeDamage(){
+    this.setHealth(this.getHealth() - 1);
+  }
+  public int attack (int playerHealth){
+    return playerHealth-10;
+  }
+    public void shoot(int playerX, int playerY){
+    clock.update(true);
+    if (totalBullets<1){
+      totalBullets++;
+      currentSprite = 1;
+      for (int i=0;i<8;i++){
+      BossBullet bossbullet = new BossBullet (this.getX(),this.getY());
+      firedBullets.add(bossbullet);
+      }
+    }
+  }
+
+  
+}
